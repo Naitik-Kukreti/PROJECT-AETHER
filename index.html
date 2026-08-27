@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AETHER — Deep Field Planetary Survey</title>
+<meta name="description" content="AETHER: an orbital survey of four worlds in the Vela-9 corridor. Imaging, telemetry and sub-surface returns from survey cycle 41." />
+<meta name="theme-color" content="#05070C" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500;600&display=swap" />
+<link rel="stylesheet" href="assets/vendor/lenis.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="is-loading">
+
+<!-- ══════════════ PRELOADER ══════════════ -->
+<div class="preloader" id="preloader">
+  <div class="pre-panel" aria-hidden="true"></div>
+  <div class="pre-inner">
+    <svg class="pre-arc" viewBox="0 0 200 200" aria-hidden="true">
+      <circle class="pre-arc-track" cx="100" cy="100" r="92" />
+      <circle class="pre-arc-fill"  cx="100" cy="100" r="92" />
+    </svg>
+    <div class="pre-num"><span id="preCount">0</span><i>%</i></div>
+    <p class="pre-label">AETHER <span>/</span> DEEP FIELD SURVEY</p>
+    <p class="pre-sub" id="preStatus">ESTABLISHING TELEMETRY LINK</p>
+  </div>
+</div>
+
+<!-- ══════════════ BACKGROUND LAYERS ══════════════ -->
+<div class="bg-nebula" aria-hidden="true"></div>
+<canvas class="bg-stars" id="stars" aria-hidden="true"></canvas>
+<div class="bg-grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="bg-vignette" aria-hidden="true"></div>
+
+<!-- ══════════════ CURSOR ══════════════ -->
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"><span class="cursor-label"></span></div>
+</div>
+
+<!-- ══════════════ HUD ══════════════ -->
+<header class="hud">
+  <a class="hud-mark" href="#top" data-cursor="TOP">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6.4"/><ellipse cx="12" cy="12" rx="11" ry="4.2" transform="rotate(-22 12 12)"/></svg>
+    <span class="hud-mark-txt">AETHER<em>/</em>DEEP FIELD SURVEY</span>
+  </a>
+
+  <nav class="hud-index" aria-label="Planet index">
+    <span class="hud-index-cur" id="hudIndex">01</span>
+    <span class="hud-index-rule"></span>
+    <span class="hud-index-tot">04</span>
+    <ul class="hud-dots">
+      <li><a href="#entry-01" data-cursor="MERIDIAN" aria-label="Planet 01 Meridian" class="is-on"></a></li>
+      <li><a href="#entry-02" data-cursor="KESH" aria-label="Planet 02 Kesh"></a></li>
+      <li><a href="#entry-03" data-cursor="VELD" aria-label="Planet 03 Veld"></a></li>
+      <li><a href="#entry-04" data-cursor="ORRIN" aria-label="Planet 04 Orrin"></a></li>
+    </ul>
+  </nav>
+
+  <div class="hud-rail" aria-hidden="true">
+    <span class="hud-rail-cap">00</span>
+    <div class="hud-rail-track"><div class="hud-rail-fill" id="railFill"></div></div>
+    <span class="hud-rail-pct" id="railPct">000</span>
+  </div>
+
+  <div class="hud-cycle" aria-hidden="true">
+    <span>CYCLE 41</span><span>SECTOR VELA-9</span><span id="hudClock">--:--:-- UTC</span>
+  </div>
+
+  <div class="hud-hint" id="hint" aria-hidden="true">
+    <span>SCROLL TO DESCEND</span>
+    <svg viewBox="0 0 12 30"><path d="M6 0v24"/><path d="M1.5 19.5 6 24l4.5-4.5"/></svg>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ══════════════════════════════════════════════════════════
+       ENTRY 01 — MERIDIAN. Hero → split re-form → fall-through.
+       ══════════════════════════════════════════════════════════ -->
+  <section class="act" id="entry-01" data-planet="01" data-name="MERIDIAN" aria-labelledby="h-meridian">
+    <div class="act-stage" id="actStage">
+
+      <!-- fall-through underlay -->
+      <div class="act-fall" aria-hidden="true">
+        <img data-draftly-asset-id="hero-image" data-draftly-default-src="assets/img/aether-surface.jpg" src="assets/img/aether-surface.jpg" alt="" />
+      </div>
+
+      <!-- neighbouring worlds, peeking in from the frame edges -->
+      <div class="peek peek-l" aria-hidden="true">
+        <div class="peek-orb" data-tex="gas"></div>
+        <span class="peek-lab">ORRIN</span>
+      </div>
+      <div class="peek peek-r" aria-hidden="true">
+        <div class="peek-orb" data-tex="rust"></div>
+        <span class="peek-lab">KESH</span>
+      </div>
+
+      <!-- the planet itself -->
+      <div class="orb-wrap" id="orbWrap">
+        <div class="orb-glow" aria-hidden="true"></div>
+        <div class="orb" id="orbEarth">
+          <img data-draftly-asset-id="img-1" data-draftly-default-src="assets/img/aether-earth.jpg" class="orb-img" src="assets/img/aether-earth.jpg" alt="Meridian, an ocean world, half lit, city lights scattered across the night side." />
+          <video data-draftly-asset-id="hero-video" data-draftly-default-src="assets/video/aether-spin.mp4" class="orb-vid" id="orbVideo" muted loop playsinline webkit-playsinline preload="auto"
+                 poster="assets/img/aether-earth.jpg" aria-hidden="true">
+            <source src="assets/video/aether-spin.mp4" type="video/mp4" />
+          </video>
+          <div class="orb-limb" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <!-- BEAT 1 : the hero -->
+      <div class="act-hero" id="actHero">
+        <p class="eyebrow js-hero-line">PLANET</p>
+        <h1 class="display display-xl" id="h-meridian" data-split>MERIDIAN</h1>
+        <p class="hero-meta js-hero-line">
+          <span>AE-01</span><i></i><span>TYPE T-IV OCEANIC</span><i></i><span>41.7 LY</span>
+        </p>
+      </div>
+
+      <!-- BEAT 2 : the re-form -->
+      <div class="act-split" id="actSplit" aria-hidden="true">
+        <div class="split-copy">
+          <p class="micro"><b>01</b> — SURVEY BRIEF</p>
+          <h2 class="split-title">A world that is<br /><em>almost</em> all water.</h2>
+          <p class="split-body">
+            Ninety-four per cent of Meridian's surface is liquid under an unbroken
+            cloud shell eleven kilometres deep. The remaining six carries every
+            light we have counted — 2,180 discrete emission clusters, all of them
+            on the night side, all of them inside the same forty-degree band.
+          </p>
+          <div class="split-actions">
+            <a class="pill" href="#surface" data-cursor="DESCEND"><span>LEARN MORE</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13"/><path d="M11 5l5 5-5 5"/></svg>
+            </a>
+            <button class="playbtn" type="button" data-cursor="PLAY" aria-label="Play orbital pass footage">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5 18 12l-9 5.5z"/></svg>
+              <span class="playbtn-ring"></span>
+            </button>
+            <span class="play-cap">PASS 04 <i></i> 00:05</span>
+          </div>
+          <dl class="split-stats">
+            <div><dt>DIAMETER</dt><dd>12,742 <em>km</em></dd></div>
+            <div><dt>ROTATION</dt><dd>23.9 <em>h</em></dd></div>
+            <div><dt>ALBEDO</dt><dd>0.31</dd></div>
+          </dl>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SURFACE — scroll-scrubbed orbital flyover
+       ══════════════════════════════════════════════════════════ -->
+  <section class="surface" id="surface" aria-label="Orbital flyover, night side">
+    <div class="surface-stage" id="surfaceStage">
+     <div class="surface-wipe" id="surfaceWipe">
+      <div class="surface-media">
+        <img data-draftly-asset-id="img-2" data-draftly-default-src="assets/img/aether-surface.jpg" class="surface-poster" id="surfacePoster" src="assets/img/aether-surface.jpg"
+             alt="Orbital view down onto the night side of Meridian, rivers of city lights threading between cloud banks." />
+        <video data-draftly-asset-id="video-1" data-draftly-default-src="assets/video/aether-fly.mp4" class="surface-vid" id="flyVideo" muted playsinline webkit-playsinline preload="auto"
+               poster="assets/img/aether-surface.jpg" aria-hidden="true">
+          <source src="assets/video/aether-fly.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="surface-scrim" aria-hidden="true"></div>
+
+      <div class="surface-hud" aria-hidden="true">
+        <span class="sh-a">PASS 04 <i></i> NIGHT SIDE</span>
+        <span class="sh-b">ALT <b id="altReadout">412</b> KM</span>
+        <span class="sh-c">SCRUB <b id="scrubReadout">0.00</b>s</span>
+      </div>
+
+      <div class="surface-log">
+        <p class="log"><span class="log-n">01</span>Terminator crossing logged at 03:11:44 UTC. Cloud deck holds at eleven kilometres. No convective towers on this hemisphere, in this season, at this latitude.</p>
+        <p class="log"><span class="log-n">02</span>The emission clusters resolve into filaments. They follow rivers, not coastlines. Whatever is down there builds along water and then stops.</p>
+        <p class="log"><span class="log-n">03</span>Thermal delta between the lit and unlit hemispheres: 61 K. Modest, for a world with an axial tilt we cannot measure.</p>
+        <p class="log"><span class="log-n">04</span>Nothing answers on any hailing band across four passes. The survey continues. It is not our function to conclude.</p>
+      </div>
+
+      <div class="surface-rule" aria-hidden="true"><span id="surfaceProg">00</span><div class="sr-track"><div class="sr-fill" id="srFill"></div></div><span>04</span></div>
+     </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ENTRY 02 — KESH. Hero wipe + horizontal scrub dossier.
+       ══════════════════════════════════════════════════════════ -->
+  <section class="entry" id="entry-02" data-planet="02" data-name="KESH" data-accent="rust">
+    <div class="phero" data-wipe>
+      <div class="phero-inner">
+        <div class="orb-wrap orb-wrap--hero">
+          <div class="orb-glow" aria-hidden="true"></div>
+          <div class="orb" data-tex="rust" data-parallax="0.14">
+            <img data-draftly-asset-id="img-3" data-draftly-default-src="assets/img/aether-rust.jpg" class="orb-img" src="assets/img/aether-rust.jpg" alt="Kesh, a rust-red desert world scored by canyon systems, with a bright polar cap." />
+            <div class="orb-limb" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="phero-type">
+          <p class="eyebrow">PLANET</p>
+          <h2 class="display display-xl" data-split>KESH</h2>
+          <p class="hero-meta"><span>AE-02</span><i></i><span>TYPE D-II ARID</span><i></i><span>41.9 LY</span></p>
+        </div>
+        <span class="wipe-edge" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <!-- horizontal scrub -->
+    <div class="hscroll" id="hscroll">
+      <div class="hscroll-head">
+        <p class="micro"><b>02</b> — SURFACE DOSSIER</p>
+        <p class="hscroll-hint">DRAG THE SCROLL WHEEL <i></i> HORIZONTAL PLATE</p>
+      </div>
+      <div class="hscroll-track" id="hTrack">
+        <article class="hcard">
+          <span class="hcard-fig">FIG. 02.1</span>
+          <h3>The Long Cut</h3>
+          <p>A single canyon system runs 4,180 km along the equator and never exceeds 9 km in width. Erosion cannot do this. Nothing else we have imaged does it either.</p>
+          <dl><div><dt>LENGTH</dt><dd>4,180 km</dd></div><div><dt>DEPTH</dt><dd>7.2 km</dd></div></dl>
+        </article>
+        <article class="hcard">
+          <span class="hcard-fig">FIG. 02.2</span>
+          <h3>Polar Cap</h3>
+          <p>Carbon dioxide over water ice, layered in 214 visible strata. Each stratum is a year we did not watch. The cap retreats 40 km in the warm season and returns exactly.</p>
+          <dl><div><dt>STRATA</dt><dd>214</dd></div><div><dt>SWING</dt><dd>40 km</dd></div></dl>
+        </article>
+        <article class="hcard">
+          <span class="hcard-fig">FIG. 02.3</span>
+          <h3>Dust Season</h3>
+          <p>Global opacity events last 61 to 74 days and raise the mean surface temperature by 19 K. Between them the atmosphere is clearer than vacuum has any right to be.</p>
+          <dl><div><dt>DURATION</dt><dd>61–74 d</dd></div><div><dt>ΔT</dt><dd>+19 K</dd></div></dl>
+        </article>
+        <article class="hcard">
+          <span class="hcard-fig">FIG. 02.4</span>
+          <h3>Remanent Field</h3>
+          <p>No active dynamo. The crust remembers one anyway — banded magnetisation in the southern highlands, 800 nT, frozen in place some three billion years before we arrived to read it.</p>
+          <dl><div><dt>STRENGTH</dt><dd>800 nT</dd></div><div><dt>AGE</dt><dd>~3.0 Gyr</dd></div></dl>
+        </article>
+        <article class="hcard hcard--end">
+          <span class="hcard-fig">FIG. 02.5</span>
+          <h3>Verdict</h3>
+          <p>Habitable at the margins. Two candidate landing shelves at 14°N. Recommend a second cycle with ground penetration before any crewed approach.</p>
+          <a class="pill pill--ghost" href="#entry-03" data-cursor="NEXT"><span>NEXT WORLD</span>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10h13"/><path d="M11 5l5 5-5 5"/></svg></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ENTRY 03 — VELD. Hero wipe + ledger of readings.
+       ══════════════════════════════════════════════════════════ -->
+  <section class="entry" id="entry-03" data-planet="03" data-name="VELD" data-accent="ice">
+    <div class="phero" data-wipe>
+      <div class="phero-inner">
+        <div class="orb-wrap orb-wrap--hero orb-wrap--offset">
+          <div class="orb-glow" aria-hidden="true"></div>
+          <div class="orb" data-tex="ice" data-parallax="0.18">
+            <img data-draftly-asset-id="img-4" data-draftly-default-src="assets/img/aether-ice.jpg" class="orb-img" src="assets/img/aether-ice.jpg" alt="Veld, a frozen cyan-white world whose shell is broken into plates by glowing crevasse lines." />
+            <div class="orb-limb" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="phero-type phero-type--left">
+          <p class="eyebrow">PLANET</p>
+          <h2 class="display display-xl" data-split>VELD</h2>
+          <p class="hero-meta"><span>AE-03</span><i></i><span>TYPE G-I GLACIAL</span><i></i><span>42.4 LY</span></p>
+        </div>
+        <span class="wipe-edge" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="ledger">
+      <div class="ledger-head">
+        <p class="micro"><b>03</b> — INSTRUMENT LEDGER</p>
+        <p class="ledger-note">Returns from four passes. Sub-surface radar, 9 MHz, nadir looking. Confidence stated where the instrument allows it.</p>
+      </div>
+      <ol class="ledger-rows">
+        <li class="lrow"><span class="lrow-n">R-01</span><span class="lrow-k">Shell thickness</span><span class="lrow-v">34.2 <em>km</em></span><span class="lrow-c">σ 1.1</span></li>
+        <li class="lrow"><span class="lrow-n">R-02</span><span class="lrow-k">Sub-surface ocean</span><span class="lrow-v">CONFIRMED</span><span class="lrow-c">98%</span></li>
+        <li class="lrow"><span class="lrow-n">R-03</span><span class="lrow-k">Crevasse field, major</span><span class="lrow-v">1,904 <em>km</em></span><span class="lrow-c">σ 6</span></li>
+        <li class="lrow"><span class="lrow-n">R-04</span><span class="lrow-k">Tidal heating</span><span class="lrow-v">0.41 <em>W m⁻²</em></span><span class="lrow-c">σ 0.03</span></li>
+        <li class="lrow"><span class="lrow-n">R-05</span><span class="lrow-k">Surface temperature</span><span class="lrow-v">61 <em>K</em></span><span class="lrow-c">σ 2</span></li>
+        <li class="lrow"><span class="lrow-n">R-06</span><span class="lrow-k">Plume activity, south</span><span class="lrow-v">INTERMITTENT</span><span class="lrow-c">71%</span></li>
+        <li class="lrow"><span class="lrow-n">R-07</span><span class="lrow-k">Salinity, inferred</span><span class="lrow-v">21 <em>g L⁻¹</em></span><span class="lrow-c">LOW</span></li>
+      </ol>
+      <p class="ledger-close">The crevasses glow because the ocean is warm and the shell is thin. That is the entire finding. Everything else on this page is arithmetic in support of it.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ENTRY 04 — ORRIN. Hero wipe + orbital ring diagram.
+       ══════════════════════════════════════════════════════════ -->
+  <section class="entry" id="entry-04" data-planet="04" data-name="ORRIN" data-accent="gas">
+    <div class="phero" data-wipe>
+      <div class="phero-inner">
+        <div class="orb-wrap orb-wrap--hero">
+          <div class="orb-glow" aria-hidden="true"></div>
+          <div class="orb" data-tex="gas" data-parallax="0.11">
+            <img data-draftly-asset-id="img-5" data-draftly-default-src="assets/img/aether-gas.jpg" class="orb-img" src="assets/img/aether-gas.jpg" alt="Orrin, an amber banded gas giant encircled by a broad, finely divided ring system." />
+            <div class="orb-limb" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="phero-type">
+          <p class="eyebrow">PLANET</p>
+          <h2 class="display display-xl" data-split>ORRIN</h2>
+          <p class="hero-meta"><span>AE-04</span><i></i><span>TYPE J-V GIANT</span><i></i><span>42.8 LY</span></p>
+        </div>
+        <span class="wipe-edge" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="orbital" id="orbital">
+      <div class="orbital-head">
+        <p class="micro"><b>04</b> — RING SYSTEM</p>
+        <h3 class="orbital-title">Sixty-two moons, and a gap<br />that should not be empty.</h3>
+      </div>
+      <div class="orbital-stage">
+        <svg class="orbital-rings" viewBox="0 0 800 800" aria-hidden="true">
+          <ellipse class="oring" cx="400" cy="400" rx="380" ry="112" />
+          <ellipse class="oring" cx="400" cy="400" rx="320" ry="94" />
+          <ellipse class="oring oring--hot" cx="400" cy="400" rx="252" ry="74" />
+          <ellipse class="oring" cx="400" cy="400" rx="196" ry="58" />
+          <circle class="ocore" cx="400" cy="400" r="128" />
+        </svg>
+        <div class="orbital-planet"><div class="orb" data-tex="gas"><img data-draftly-asset-id="img-6" data-draftly-default-src="assets/img/aether-gas.jpg" class="orb-img" src="assets/img/aether-gas.jpg" alt="" /></div></div>
+        <ul class="orbital-marks">
+          <li class="omark" style="--a:-34deg"><b>RING SPAN</b><span>284,000 km</span></li>
+          <li class="omark" style="--a:26deg"><b>BAND VELOCITY</b><span>1,410 km h⁻¹</span></li>
+          <li class="omark" style="--a:148deg"><b>CASSINI GAP</b><span>4,800 km</span></li>
+          <li class="omark" style="--a:206deg"><b>CONFIRMED MOONS</b><span>62</span></li>
+        </ul>
+      </div>
+      <p class="orbital-close">The bright division at 116,000 km carries no shepherd. Either we have not found the moon that clears it, or something else does.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ARCHIVE — full-bleed loop, outlined type, filter bar
+       ══════════════════════════════════════════════════════════ -->
+  <section class="archive" id="archive" aria-label="Field archive">
+    <div class="archive-media" aria-hidden="true">
+      <img data-draftly-asset-id="img-7" data-draftly-default-src="assets/img/aether-surface.jpg" class="archive-poster" src="assets/img/aether-surface.jpg" alt="" />
+      <video data-draftly-asset-id="video-2" data-draftly-default-src="assets/video/aether-fly.mp4" class="archive-vid" id="archiveVideo" muted loop playsinline webkit-playsinline preload="none"
+             poster="assets/img/aether-surface.jpg">
+        <source src="assets/video/aether-fly.mp4" type="video/mp4" />
+      </video>
+      <div class="archive-scrim"></div>
+    </div>
+    <div class="archive-inner">
+      <p class="micro micro--center">OPEN RECORD <i></i> 4,118 PLATES</p>
+      <h2 class="archive-type"><span class="outline" data-split>FIELD</span><span class="solid" data-split>ARCHIVE</span></h2>
+      <form class="filterbar" id="filterbar" role="search" onsubmit="return false;">
+        <label class="fb-search">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 18 18"/></svg>
+          <input type="search" id="fbInput" placeholder="Search plate, band or designation" aria-label="Search the field archive" />
+        </label>
+        <div class="fb-chips" role="group" aria-label="Filter by record type">
+          <button type="button" class="chip is-on" data-cursor="FILTER">ALL</button>
+          <button type="button" class="chip" data-cursor="FILTER">IMAGING</button>
+          <button type="button" class="chip" data-cursor="FILTER">SPECTRA</button>
+          <button type="button" class="chip" data-cursor="FILTER">TELEMETRY</button>
+          <button type="button" class="chip" data-cursor="FILTER">SUB-SURFACE</button>
+        </div>
+        <p class="fb-count"><b id="fbCount">4118</b> RESULTS</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       COMPARATIVE DATA
+       ══════════════════════════════════════════════════════════ -->
+  <section class="compare" id="compare" aria-labelledby="cmp-h">
+    <div class="compare-head">
+      <p class="micro"><b>05</b> — COMPARATIVE TABLE</p>
+      <h2 class="compare-title" id="cmp-h">Four worlds,<br />one column at a time.</h2>
+      <p class="compare-note">All figures normalised to the survey epoch. Mass in Earth units. Temperature is a global mean at the reference altitude, not a surface reading.</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="cmp-row cmp-row--head" aria-hidden="true">
+        <span>WORLD</span><span>ORBITAL PERIOD</span><span>MASS</span><span>SURFACE TEMP</span><span>MOONS</span>
+      </div>
+
+      <div class="cmp-row" data-accent="earth">
+        <span class="cmp-name"><b>01</b> MERIDIAN</span>
+        <span class="cmp-cell"><em class="count" data-to="411" data-dec="0">0</em> <i>d</i><span class="bar"><b style="--w:38%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="1.04" data-dec="2">0</em> <i>M⊕</i><span class="bar"><b style="--w:12%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="288" data-dec="0">0</em> <i>K</i><span class="bar"><b style="--w:44%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="2" data-dec="0">0</em><span class="bar"><b style="--w:4%"></b></span></span>
+      </div>
+
+      <div class="cmp-row" data-accent="rust">
+        <span class="cmp-name"><b>02</b> KESH</span>
+        <span class="cmp-cell"><em class="count" data-to="774" data-dec="0">0</em> <i>d</i><span class="bar"><b style="--w:71%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="0.38" data-dec="2">0</em> <i>M⊕</i><span class="bar"><b style="--w:5%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="214" data-dec="0">0</em> <i>K</i><span class="bar"><b style="--w:33%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="2" data-dec="0">0</em><span class="bar"><b style="--w:4%"></b></span></span>
+      </div>
+
+      <div class="cmp-row" data-accent="ice">
+        <span class="cmp-name"><b>03</b> VELD</span>
+        <span class="cmp-cell"><em class="count" data-to="1092" data-dec="0">0</em> <i>d</i><span class="bar"><b style="--w:100%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="0.72" data-dec="2">0</em> <i>M⊕</i><span class="bar"><b style="--w:9%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="61" data-dec="0">0</em> <i>K</i><span class="bar"><b style="--w:9%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="9" data-dec="0">0</em><span class="bar"><b style="--w:15%"></b></span></span>
+      </div>
+
+      <div class="cmp-row" data-accent="gas">
+        <span class="cmp-name"><b>04</b> ORRIN</span>
+        <span class="cmp-cell"><em class="count" data-to="4,207" data-dec="0">0</em> <i>d</i><span class="bar"><b style="--w:86%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="94.6" data-dec="1">0</em> <i>M⊕</i><span class="bar"><b style="--w:100%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="134" data-dec="0">0</em> <i>K</i><span class="bar"><b style="--w:21%"></b></span></span>
+        <span class="cmp-cell"><em class="count" data-to="62" data-dec="0">0</em><span class="bar"><b style="--w:100%"></b></span></span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="foot" id="foot">
+  <div class="foot-top">
+    <p class="foot-mark">AETHER<em>/</em>DEEP FIELD SURVEY</p>
+    <p class="foot-line">Survey cycle 41 closed. Four worlds imaged, none claimed.</p>
+  </div>
+
+  <div class="foot-grid">
+    <div class="foot-col">
+      <h3 class="micro">MISSION</h3>
+      <ul><li>Vela-9 Deep Field Programme</li><li>Instrument suite CASSA-IV</li><li>Sub-surface radar, 9 MHz</li><li>Optical plate archive</li></ul>
+    </div>
+    <div class="foot-col">
+      <h3 class="micro">CREDITS</h3>
+      <ul><li>Flight dynamics — R. Ashe</li><li>Imaging — N. Oyelaran</li><li>Radar &amp; sounding — J. Vance</li><li>Survey lead — E. Marchetti</li></ul>
+    </div>
+    <div class="foot-col">
+      <h3 class="micro">COORDINATES</h3>
+      <ul class="foot-coords">
+        <li>RA <b>17<sup>h</sup> 44<sup>m</sup> 12<sup>s</sup></b></li>
+        <li>DEC <b>−29° 27′ 06″</b></li>
+        <li>DIST <b>41.7 – 42.8 LY</b></li>
+        <li>EPOCH <b>J2000.0</b></li>
+      </ul>
+    </div>
+    <div class="foot-col foot-col--clock">
+      <h3 class="micro">MISSION TIME</h3>
+      <p class="foot-clock" id="footClock">00:00:00</p>
+      <p class="foot-clock-sub">UTC <i></i> <span id="footDate">----‑--‑--</span></p>
+    </div>
+  </div>
+
+  <div class="foot-bot">
+    <span>© AETHER SURVEY — RECORD OPEN</span>
+    <span>NO SIGNAL RETURNED ON ANY BAND</span>
+    <a href="#top" data-cursor="TOP">RETURN TO ORBIT ↑</a>
+  </div>
+</footer>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/ScrollToPlugin.min.js"></script>
+<script src="assets/vendor/CustomEase.min.js"></script>
+<script src="assets/vendor/split-type.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
